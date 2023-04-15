@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:gamfedapp/screens/stopwatch_timer_page.dart';
+import 'package:gamfedapp/screens/home_page.dart';
 
 void main() => runApp(const MyApp());
 
@@ -14,11 +14,11 @@ class _MyAppState extends State<MyApp> {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-        title: 'Gamfed App',
+        title: 'GamFed Screen App',
         debugShowCheckedModeBanner: false,
         theme: ThemeData(
           primarySwatch: Colors.green,
         ),
-        home: const StopWatchTimerPage());
+        home: const MyHomePage());
   }
 }

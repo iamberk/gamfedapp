@@ -1,11 +1,6 @@
 import 'package:flutter/material.dart';
 
 class ButtonWidget extends StatelessWidget {
-  final String text;
-  final Color color;
-  final Color backgroundColor;
-  final VoidCallback onClicked;
-
   const ButtonWidget(
       {Key? key,
       required this.text,
@@ -13,6 +8,12 @@ class ButtonWidget extends StatelessWidget {
       this.color = Colors.white,
       this.backgroundColor = Colors.black})
       : super(key: key);
+
+  final Color backgroundColor;
+  final Color color;
+  final VoidCallback onClicked;
+  final String text;
+
   @override
   Widget build(BuildContext context) => ElevatedButton(
       style: ElevatedButton.styleFrom(

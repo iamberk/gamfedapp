@@ -3,20 +3,28 @@
 import 'dart:async';
 import 'package:cool_alert/cool_alert.dart';
 import 'package:flutter/material.dart';
-import 'button_widget.dart';
+import 'package:gamfedapp/screens/blog_page.dart';
+import 'package:gamfedapp/screens/friends_pafe.dart';
+import 'package:gamfedapp/screens/library_page.dart';
+import 'package:gamfedapp/screens/my_papers.dart';
+import 'package:gamfedapp/screens/settings_page.dart';
+import '../widgets/button_widget.dart';
 
-class StopWatchTimerPage extends StatefulWidget {
-  const StopWatchTimerPage({Key? key}) : super(key: key);
+class MyHomePage extends StatefulWidget {
+  const MyHomePage({Key? key}) : super(key: key);
+
   @override
-  _StopWatchTimerPageState createState() => _StopWatchTimerPageState();
+  _MyHomePageState createState() => _MyHomePageState();
 }
 
-class _StopWatchTimerPageState extends State<StopWatchTimerPage> {
+class _MyHomePageState extends State<MyHomePage> {
   static const countdownDuration = Duration(seconds: 15);
-  Duration duration = const Duration();
-  Timer? timer;
-  int paperCount = 0;
+
   bool countDown = true;
+  Duration duration = const Duration();
+  int paperCount = 0;
+  var period = const Duration(seconds: 1);
+  Timer? timer;
 
   @override
   void initState() {
@@ -38,7 +46,6 @@ class _StopWatchTimerPageState extends State<StopWatchTimerPage> {
     }
   }
 
-  var period = const Duration(seconds: 1);
   void startTimer() {
     timer = Timer.periodic(period, (_) => addTime());
   }
@@ -61,29 +68,6 @@ class _StopWatchTimerPageState extends State<StopWatchTimerPage> {
     }
     setState(() => timer?.cancel());
   }
-
-  @override
-  Widget build(BuildContext context) => Scaffold(
-        backgroundColor: Colors.orange[50],
-        appBar: AppBar(
-          centerTitle: true,
-          automaticallyImplyLeading: false,
-          title: const Text("GamFed Focus App"),
-        ),
-        floatingActionButton: FloatingActionButton(
-          onPressed: () {
-            // Add your onPressed code here!
-          },
-          backgroundColor: Colors.green,
-          child: Text(paperCount.toString()),
-        ),
-        body: Center(
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [buildTime(), const SizedBox(height: 80), buildButtons()],
-          ),
-        ),
-      );
 
   Widget buildTime() {
     String twoDigits(int n) => n.toString().padLeft(2, '0');
@@ -196,4 +180,97 @@ class _StopWatchTimerPageState extends State<StopWatchTimerPage> {
                   startTimer();
                 });
   }
+
+  @override
+  Widget build(BuildContext context) => Scaffold(
+        backgroundColor: Colors.orange[50],
+        drawer: Drawer(
+          child: ListView(
+            // Important: Remove any padding from the ListView.
+            padding: EdgeInsets.zero,
+            children: <Widget>[
+              const UserAccountsDrawerHeader(
+                accountName: Text("Abhishek Mishra"),
+                accountEmail: Text("abhishekm977@gmail.com"),
+                currentAccountPicture: CircleAvatar(
+                  backgroundColor: Colors.orange,
+                  child: Text(
+                    "A",
+                    style: TextStyle(fontSize: 40.0),
+                  ),
+                ),
+              ),
+              ListTile(
+                leading: const Icon(Icons.book),
+                title: const Text("Sayfalarım"),
+                onTap: () {
+                  Navigator.push(context, MaterialPageRoute(builder: (context) {
+                    return const MyPapersPage();
+                  }));
+                },
+              ),
+              ListTile(
+                leading: const Icon(Icons.library_books),
+                title: const Text("Kütüphane"),
+                onTap: () {
+                  Navigator.push(context, MaterialPageRoute(builder: (context) {
+                    return const LibraryPage();
+                  }));
+                },
+              ),
+              ListTile(
+                leading: const Icon(Icons.group),
+                title: const Text("Arkadaşlarım"),
+                onTap: () {
+                  Navigator.push(context, MaterialPageRoute(builder: (context) {
+                    return const FriendsPage();
+                  }));
+                },
+              ),
+              ListTile(
+                leading: const Icon(Icons.workspace_premium),
+                title: const Text("Başarılarım"),
+                onTap: () {
+                  Navigator.pop(context);
+                },
+              ),
+              ListTile(
+                leading: const Icon(Icons.article),
+                title: const Text("Blog"),
+                onTap: () {
+                  Navigator.push(context, MaterialPageRoute(builder: (context) {
+                    return const BlogPage();
+                  }));
+                },
+              ),
+              ListTile(
+                leading: const Icon(Icons.settings),
+                title: const Text("Ayarlar"),
+                onTap: () {
+                  Navigator.push(context, MaterialPageRoute(builder: (context) {
+                    return const SettingsPage();
+                  }));
+                },
+              ),
+            ],
+          ),
+        ),
+        appBar: AppBar(
+          centerTitle: true,
+          title: const Text("GamFed Screen App"),
+        ),
+        floatingActionButton: FloatingActionButton(
+          onPressed: () {
+            // Add your onPressed code here!
+          },
+          backgroundColor: Colors.green,
+          child: Text(paperCount.toString()),
+        ),
+        body: Center(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [buildTime(), const SizedBox(height: 80), buildButtons()],
+          ),
+        ),
+      );
 }
