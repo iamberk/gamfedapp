@@ -1,4 +1,3 @@
-// ignore_for_file: library_private_types_in_public_api
 import 'dart:async';
 import 'package:cool_alert/cool_alert.dart';
 import 'package:flutter/material.dart';
@@ -7,26 +6,41 @@ import 'package:gamfedapp/screens/friends_pafe.dart';
 import 'package:gamfedapp/screens/library_page.dart';
 import 'package:gamfedapp/screens/my_papers.dart';
 import 'package:gamfedapp/screens/settings_page.dart';
+import 'package:syncfusion_flutter_sliders/sliders.dart';
 import '../widgets/button_widget.dart';
 
 class MyHomePage extends StatefulWidget {
   const MyHomePage({Key? key}) : super(key: key);
 
   @override
-  _MyHomePageState createState() => _MyHomePageState();
+  MyHomePageState createState() => MyHomePageState();
 }
 
-class _MyHomePageState extends State<MyHomePage> with WidgetsBindingObserver {
-  static const countdownDuration = Duration(seconds: 15);
+class MyHomePageState extends State<MyHomePage> with WidgetsBindingObserver {
+  List<Duration> countdownDuration = [
+    const Duration(seconds: 5), // 15 minutes but now 5 seconds for testing
+    const Duration(minutes: 30),
+    const Duration(minutes: 60),
+    const Duration(minutes: 120)
+  ];
+  List<int> paperCounts = [1, 3, 5, 10]; // add paper count for each duration
+  double durationIndex = 0; // double for slider
 
   bool countDown = true;
   Duration duration = const Duration();
-  int paperCount = 0;
+  int paperCount = 0; // user paper count
   var period = const Duration(seconds: 1);
   Timer? timer;
 
   @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addObserver(this); // for AppLifecycleState
+  }
+
+  @override
   void didChangeAppLifecycleState(AppLifecycleState state) {
+    // asıl logic bu kısımda işleyecek
     debugPrint('state = $state');
     if (state == AppLifecycleState.resumed) {
       debugPrint('resumed');
@@ -39,22 +53,16 @@ class _MyHomePageState extends State<MyHomePage> with WidgetsBindingObserver {
     }
   }
 
-  @override
-  void initState() {
-    super.initState();
-    reset();
-    WidgetsBinding.instance.addObserver(this);
-  }
-
   void addPaper() {
     setState(() {
-      paperCount++;
+      paperCount += paperCounts[durationIndex ~/ 1];
     });
   }
 
   void reset() {
     if (countDown) {
-      setState(() => duration = countdownDuration);
+      setState(() => duration =
+          countdownDuration[durationIndex ~/ 1]); // toInt() isn't working
     } else {
       setState(() => duration = const Duration());
     }
@@ -89,8 +97,42 @@ class _MyHomePageState extends State<MyHomePage> with WidgetsBindingObserver {
     final minutes = twoDigits(duration.inMinutes.remainder(60));
     final seconds = twoDigits(duration.inSeconds.remainder(60));
     bool isComplated = duration.inSeconds == 0;
+    final isRunning = timer == null ? false : timer!.isActive;
 
     return Column(children: [
+      isRunning
+          ? const SizedBox(height: 56)
+          : SfSlider(
+              min: 0.0,
+              max: 3.0,
+              interval: 1,
+              showTicks: true,
+              stepSize: 1,
+              showLabels: true,
+              labelFormatterCallback:
+                  (dynamic actualLabel, dynamic formattedText) {
+                switch (actualLabel.toInt()) {
+                  case 0:
+                    return '15 dk';
+                  case 1:
+                    return '30 dk';
+                  case 2:
+                    return '1 saat';
+                  case 3:
+                    return '2 saat';
+                  default:
+                    return '';
+                }
+              },
+              value: durationIndex,
+              onChanged: (dynamic newValue) {
+                setState(() {
+                  durationIndex = newValue;
+                });
+                reset();
+              },
+            ),
+      const SizedBox(height: 60),
       Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children: isComplated
@@ -98,16 +140,16 @@ class _MyHomePageState extends State<MyHomePage> with WidgetsBindingObserver {
                   Column(
                     children: [
                       Container(
-                        padding: const EdgeInsets.all(8),
+                        padding: const EdgeInsets.all(12),
                         decoration: BoxDecoration(
                             color: Colors.white,
-                            borderRadius: BorderRadius.circular(20)),
-                        child: const Text(
-                          "1 Sayfa Daha Kazandın!",
-                          style: TextStyle(
+                            borderRadius: BorderRadius.circular(10)),
+                        child: Text(
+                          "Tebrikler! ${paperCounts[durationIndex ~/ 1]} Sayfa Daha Kazandın.",
+                          style: const TextStyle(
                               fontWeight: FontWeight.bold,
                               color: Colors.black,
-                              fontSize: 25),
+                              fontSize: 20),
                         ),
                       ),
                       const SizedBox(height: 10),
