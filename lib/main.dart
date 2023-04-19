@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:gamfedapp/screens/home_page.dart';
+import 'package:gamfedapp/screens/test_screen.dart';
 
 void main() => runApp(const MyApp());
 
@@ -19,6 +20,7 @@ class _MyAppState extends State<MyApp> {
         theme: ThemeData(
           primarySwatch: Colors.green,
         ),
+        // home: const TimerPage());
         home: const MyHomePage());
   }
 }

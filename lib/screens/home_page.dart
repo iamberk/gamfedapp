@@ -1,5 +1,4 @@
 // ignore_for_file: library_private_types_in_public_api
-
 import 'dart:async';
 import 'package:cool_alert/cool_alert.dart';
 import 'package:flutter/material.dart';
@@ -17,7 +16,7 @@ class MyHomePage extends StatefulWidget {
   _MyHomePageState createState() => _MyHomePageState();
 }
 
-class _MyHomePageState extends State<MyHomePage> {
+class _MyHomePageState extends State<MyHomePage> with WidgetsBindingObserver {
   static const countdownDuration = Duration(seconds: 15);
 
   bool countDown = true;
@@ -27,9 +26,24 @@ class _MyHomePageState extends State<MyHomePage> {
   Timer? timer;
 
   @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    debugPrint('state = $state');
+    if (state == AppLifecycleState.resumed) {
+      debugPrint('resumed');
+    } else if (state == AppLifecycleState.paused) {
+      debugPrint('paused');
+    } else if (state == AppLifecycleState.detached) {
+      debugPrint('detached');
+    } else if (state == AppLifecycleState.inactive) {
+      debugPrint('inactive');
+    }
+  }
+
+  @override
   void initState() {
     super.initState();
     reset();
+    WidgetsBinding.instance.addObserver(this);
   }
 
   void addPaper() {
@@ -260,9 +274,7 @@ class _MyHomePageState extends State<MyHomePage> {
           title: const Text("GamFed Screen App"),
         ),
         floatingActionButton: FloatingActionButton(
-          onPressed: () {
-            // Add your onPressed code here!
-          },
+          onPressed: null,
           backgroundColor: Colors.green,
           child: Text(paperCount.toString()),
         ),
